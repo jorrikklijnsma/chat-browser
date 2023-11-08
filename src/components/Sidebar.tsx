@@ -1,17 +1,8 @@
-// src/components/Sidebar.tsx
-
 import React from 'react';
 import styled from 'styled-components';
 import { Channel } from '../types';
 
-const SidebarContainer = styled.div`
-  width: 250px;
-  height: 100vh;
-  overflow-y: auto;
-  background-color: #3f0e40;
-  color: white;
-  padding: 10px;
-`;
+const SidebarContainer = styled.div``;
 
 const ChannelList = styled.ul`
   list-style: none;
@@ -38,7 +29,7 @@ const Sidebar: React.FC<Props> = ({ channels, onSelectChannel }) => {
         {channels.map((channel) => (
           <ChannelListItem
             key={channel.id}
-            onClick={() => onSelectChannel(channel.id)}
+            onClick={() => onSelectChannel(channel.name)}
           >
             # {channel.name}
           </ChannelListItem>

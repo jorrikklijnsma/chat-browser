@@ -1,28 +1,37 @@
-// src/types/Message.ts
-export interface MessageBlockElement {
-  type: string;
+import { UserProfile } from './User';
+
+export interface BroadcastElement {
+  type: 'broadcast';
+  range: string;
+}
+
+export interface TextElement {
+  type: 'text';
   text: string;
 }
 
-export interface MessageBlock {
-  type: string;
-  block_id: string;
-  elements: {
-    type: string;
-    elements: MessageBlockElement[];
-  }[];
+export interface Attachment {
+  id: string;
+  type: 'image' | 'video' | 'file';
+  url: string;
 }
 
-export interface UserProfile {
-  avatar_hash: string;
-  image_72: string;
-  first_name: string;
-  real_name: string;
-  display_name: string;
-  team: string;
-  name: string;
-  is_restricted: boolean;
-  is_ultra_restricted: boolean;
+export interface Thread {
+  id: string;
+  messages: Message[];
+}
+
+export interface MessageBlock {
+  type: 'rich_text';
+  block_id: string;
+  elements: MessageElement[];
+}
+
+export type RichTextElement = BroadcastElement | TextElement;
+
+export interface RichTextSectionElement {
+  type: 'rich_text_section';
+  elements: RichTextElement[];
 }
 
 export interface MessageReply {
@@ -30,9 +39,16 @@ export interface MessageReply {
   ts: string;
 }
 
+export type MessageElement = RichTextSectionElement;
+
 export interface Message {
   client_msg_id: string;
-  type: string;
+  type: 'message' | 'system';
+  id: string;
+  userId: string;
+  timestamp: number;
+  threadId?: string;
+  attachments?: Attachment[];
   text: string;
   user: string;
   ts: string;
@@ -42,12 +58,12 @@ export interface Message {
   source_team: string;
   user_profile: UserProfile;
   thread_ts: string;
-  reply_count: number;
-  reply_users_count: number;
-  latest_reply: string;
-  reply_users: string[];
-  replies: MessageReply[];
+  reply_count?: number;
+  reply_users_count?: number;
+  latest_reply?: string;
+  reply_users?: string[];
+  replies?: MessageReply[];
   is_locked: boolean;
   subscribed: boolean;
-  last_read: string;
+  parent_user_id?: string;
 }

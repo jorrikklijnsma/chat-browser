@@ -1,4 +1,3 @@
-// src/types/User.ts
 export interface StatusEmojiDisplayInfo {
   emoji_name: string;
   display_url: string;

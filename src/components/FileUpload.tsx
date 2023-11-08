@@ -43,7 +43,7 @@ const FileUpload: React.FC<Props> = ({
           if (!fileEntry.dir) {
             const pathParts = relativePath.split('/');
             // Assuming a structure like 'channelName/YYYY-MM-DD.json'
-            if (pathParts.length === 3) {
+            if (pathParts.length > 1) {
               const channelId = pathParts[0]; // This should be the channel's ID or name
               const date = pathParts[1].replace('.json', ''); // Extract date from the filename
               const promise = fileEntry
