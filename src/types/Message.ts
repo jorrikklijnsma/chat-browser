@@ -1,10 +1,5 @@
 import { UserProfile } from './User';
 
-export interface BroadcastElement {
-  type: 'broadcast';
-  range: string;
-}
-
 export interface TextElement {
   type: 'text';
   text: string;
@@ -27,7 +22,7 @@ export interface MessageBlock {
   elements: MessageElement[];
 }
 
-export type RichTextElement = BroadcastElement | TextElement;
+export type RichTextElement = TextElement;
 
 export interface RichTextSectionElement {
   type: 'rich_text_section';

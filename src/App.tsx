@@ -4,14 +4,20 @@ import Sidebar from './components/Sidebar';
 import MessageList from './components/MessageList/MessageList'; // Import the MessageList component
 import { Channel, Message, User } from './types'; // Import your types
 import { styled } from 'styled-components';
+import ThreadDetail from './components/ThreadDetail/ThreadDetail';
 
 const PageWrapper = styled.div`
   display: grid;
-  grid-template-columns: 250px 1fr;
-  width: 100lvw;
-  min-height: 100lvh;
-  background-color: #222;
-  color: white;
+  grid-template-columns: 250px 1fr 350px; // Adjust as necessary, 350px for the thread panel
+  grid-template-areas: 'sidebar chat thread';
+  width: 100vw;
+  min-height: 100vh;
+  // Additional styling
+`;
+
+const Main = styled.main`
+  grid-area: chat;
+  // Rest of the styling
 `;
 
 const SidebarScroller = styled.aside`
@@ -47,13 +53,6 @@ const Section = styled.section`
   padding: 10px;
 `;
 
-const Main = styled.main`
-  display: flex;
-  flex-grow: 1;
-  padding: 10px;
-  position: relative;
-`;
-
 const App: React.FC = () => {
   const [channels, setChannels] = useState<Channel[]>([]);
   // Change messages to an object keyed by channel IDs
@@ -65,6 +64,11 @@ const App: React.FC = () => {
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
     null,
   );
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+
+  const [selectedThreadMessages, setSelectedThreadMessages] = useState<
+    Message[]
+  >([]);
 
   useEffect(() => {
     // Whenever selectedChannelId changes, update the state for messages
@@ -117,6 +121,15 @@ const App: React.FC = () => {
     setMessages(filteredMessages);
   };
 
+  const handleSelectThread = (threadId: string) => {
+    setSelectedThreadId(threadId);
+    // Filter messages for the selected thread
+    const threadMessages = messages.filter(
+      (message) => message.threadId === threadId,
+    );
+    setSelectedThreadMessages(threadMessages);
+  };
+
   return (
     <PageWrapper className="App">
       <SidebarScroller>
@@ -141,7 +154,20 @@ const App: React.FC = () => {
         </Aside>
       </SidebarScroller>
       <Main>
-        {selectedChannelId && <MessageList messages={messages} users={users} />}
+        {/* {selectedChannelId && <MessageList messages={messages} users={users} />} */}
+        {selectedChannelId && (
+          <MessageList
+            messages={messages}
+            users={users}
+            onSelectThread={handleSelectThread}
+          />
+        )}
+        {selectedThreadMessages && selectedThreadId && (
+          <ThreadDetail
+            threadId={selectedThreadId}
+            threadMessages={selectedThreadMessages}
+          />
+        )}
       </Main>
     </PageWrapper>
   );

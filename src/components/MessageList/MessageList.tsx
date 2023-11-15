@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Message,
-  MessageBlock,
-  MessageElement,
-  TextElement,
-} from '../../types/Message'; // Adjust the path as necessary
+import { Message, MessageBlock, MessageElement } from '../../types/Message';
 import { User } from '../../types';
 import { getUserNiceName } from '../../utils/GetUserNiceName';
 import { styled } from 'styled-components';
@@ -27,31 +22,13 @@ const MessageBlock = styled.div`
   padding: 1rem;
 `;
 
-const MessageList: React.FC<Props> = ({ messages, users }) => {
-  console.log('Hello from MessageList.tsx');
-  console.log(messages);
+const ThreadDisplay = ({ threadId }) => {
+  return <div>Thread: {threadId}</div>;
+};
 
-  // Function to render message blocks if necessary
-  // const renderMessageBlocks = (blocks: MessageBlock[]) => {
-  //   return blocks.map((block, index) => (
-  //     <div key={index}>
-  //       {block.elements.map((element: MessageElement, idx: number) => {
-  //         <p key={idx}>
-  //           {element.type === 'rich_text_section' ? (
-  //             block.elements.map(
-  //               (messageElement: TextElement, messageIndex: number) => {
-  //                 return <span key={messageIndex}>{messageElement.text}</span>;
-  //               },
-  //             )
-  //           ) : (
-  //             <>no text message</>
-  //           )}
-  //         </p>;
-  //       })}
-  //     </div>
-  //   ));
-  // };
-
+const MessageList: React.FC<
+  Props & { onSelectThread: (threadId: string) => void }
+> = ({ messages, users, onSelectThread }) => {
   const renderMessageBlocks = (blocks: MessageBlock[]) => {
     return blocks.map((block, index) => (
       <div key={index}>
@@ -84,17 +61,9 @@ const MessageList: React.FC<Props> = ({ messages, users }) => {
         : null;
 
       const date = new Date(parseInt(message.ts) * 1000);
-
-      // Hours part from the timestamp
       const hours = date.getHours();
-
-      // Minutes part from the timestamp
       const minutes = '0' + date.getMinutes();
-
-      // Seconds part from the timestamp
       const seconds = '0' + date.getSeconds();
-
-      // Will display time in 10:30:23 format
       const formattedTime =
         hours + ':' + minutes.slice(-2) + ':' + seconds.slice(-2);
 
@@ -105,23 +74,41 @@ const MessageList: React.FC<Props> = ({ messages, users }) => {
         replyCount: message.reply_count,
         date: date.toLocaleDateString('en-US'),
         time: formattedTime,
+        threadId: message.threadId,
       };
     })
     .filter((message) => message.content !== null)
     .filter((message) => !message.isThread);
 
   return (
+    // <MessageChannel>
+    //   {formattedMessages.map((message, index) => (
+    //     <MessageBlock key={index}>
+    //       <div>
+    //         <strong>{message.user}</strong>: {message.content}
+    //       </div>
+    //       <div>
+    //         {message.replyCount && <p>replies: {message.replyCount}</p>}
+    //         <p>Date: {message.date ? message.date : 'no known date'}</p>
+    //         <p>Time: {message.time ? message.time : 'no known time'}</p>
+    //       </div>
+    //     </MessageBlock>
+    //   ))}
+    // </MessageChannel>
     <MessageChannel>
       {formattedMessages.map((message, index) => (
         <MessageBlock key={index}>
           <div>
             <strong>{message.user}</strong>: {message.content}
           </div>
-          <div>
-            <p>replies: {message.replyCount}</p>
-            <p>Date: {message.date}</p>
-            <p>Time: {message.time}</p>
-          </div>
+          {message.replyCount && <p>replies: {message.replyCount}</p>}
+          <p>Date: {message.date ? message.date : 'no known date'}</p>
+          <p>Time: {message.time ? message.time : 'no known time'}</p>
+          {message.isThread && (
+            <button onClick={() => onSelectThread(message.threadId)}>
+              Open Thread
+            </button>
+          )}
         </MessageBlock>
       ))}
     </MessageChannel>
