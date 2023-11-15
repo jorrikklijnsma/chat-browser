@@ -7,8 +7,12 @@ const MessageWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   padding: 10px 20px;
+  color: white;
+  background-color: #222; // dark grey background
+
   &:hover {
     background-color: #f8f8f8; // Light grey background on hover
+    color: #333;
   }
 `;
 
@@ -30,11 +34,20 @@ const MessageTimestamp = styled.span`
   font-size: 0.875rem;
 `;
 
-const MessageContent = styled.div`
-  color: #333333;
+const MessageValue = styled.div`
   font-size: 0.9375rem;
   white-space: pre-wrap; // Ensures that the whitespaces and new lines are respected
   word-wrap: break-word; // Breaks long words to prevent overflow
+`;
+
+const MessageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MessageHeader = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 interface Props {
@@ -46,10 +59,22 @@ const ThreadMessage: React.FC<Props> = ({ message }) => {
 
   return (
     <MessageWrapper>
-      <MessageAvatar src={message.user_profile.image_48} alt={message.user} />
-      <MessageUsername>{message.user}</MessageUsername>
-      <MessageTimestamp>{formattedTime}</MessageTimestamp>
-      <MessageContent>{message.text}</MessageContent>
+      {message.user_profile?.image_72 && (
+        <MessageAvatar src={message.user_profile.image_72} alt={message.user} />
+      )}
+
+      <MessageContent>
+        <MessageHeader>
+          {message.user_profile?.display_name && (
+            <MessageUsername>
+              {message.user_profile.display_name}
+            </MessageUsername>
+          )}
+          <MessageTimestamp>{formattedTime}</MessageTimestamp>
+        </MessageHeader>
+        <MessageValue>{message.text}</MessageValue>
+        {/* Display reactions if present */}
+      </MessageContent>
     </MessageWrapper>
   );
 };

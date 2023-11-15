@@ -62,3 +62,5 @@ export interface Message {
   subscribed: boolean;
   parent_user_id?: string;
 }
+
+export type groupMessagesByDate = { [key: string]: Message[] };

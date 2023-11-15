@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Message } from '../../types';
-import ThreadMessage from './ThreadMessage';
+import ThreadMessage from '../Message/ChatMessage';
 
 const ThreadPanel = styled.div`
   grid-area: thread;
@@ -26,17 +26,24 @@ const ThreadMessageList = styled.div`
   // Additional styling
 `;
 
-// Assume that the Message component is already styled
-// and can be reused here to display each message in the thread.
+const CloseThreadButton = styled.button`
+  // Style your button to match Slack's close button
+`;
 
 interface Props {
   threadId: string;
   threadMessages: Message[];
+  onCloseThread: () => void; // Add a close handler prop
 }
 
-const ThreadDetail: React.FC<Props> = ({ threadId, threadMessages }) => {
+const ThreadDetail: React.FC<Props> = ({
+  threadId,
+  threadMessages,
+  onCloseThread,
+}) => {
   return (
     <ThreadPanel>
+      <CloseThreadButton onClick={onCloseThread}>X</CloseThreadButton>
       <ThreadHeader>
         {/* You can add the thread topic here */}
         Thread: {threadId}

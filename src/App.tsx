@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import FileUpload from './components/FileUpload';
-import Sidebar from './components/Sidebar';
-import MessageList from './components/MessageList/MessageList'; // Import the MessageList component
+import Sidebar from './components/Sidebar/Sidebar';
 import { Channel, Message, User } from './types'; // Import your types
 import { styled } from 'styled-components';
 import ThreadDetail from './components/ThreadDetail/ThreadDetail';
+import ChatArea from './components/ChatArea/ChatArea';
 
 const PageWrapper = styled.div`
   display: grid;
@@ -66,6 +66,8 @@ const App: React.FC = () => {
   );
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
 
+  const [isThreadPanelOpen, setIsThreadPanelOpen] = useState<boolean>(false);
+
   const [selectedThreadMessages, setSelectedThreadMessages] = useState<
     Message[]
   >([]);
@@ -123,11 +125,20 @@ const App: React.FC = () => {
 
   const handleSelectThread = (threadId: string) => {
     setSelectedThreadId(threadId);
-    // Filter messages for the selected thread
-    const threadMessages = messages.filter(
-      (message) => message.threadId === threadId,
-    );
-    setSelectedThreadMessages(threadMessages);
+    setIsThreadPanelOpen(true); // Open the thread panel when a thread is selected
+    scrollToMessage(threadId); // Implement this function to scroll to the message in the main chat
+
+    // const threadMessages = messages.filter(
+    //   (message) => message.threadId === threadId,
+    // );
+    // setSelectedThreadMessages(threadMessages);
+  };
+
+  const handleCloseThread = () => {
+    setIsThreadPanelOpen(false); // Close the thread panel
+    if (selectedThreadId) {
+      scrollToMessage(selectedThreadId); // Scroll to the message when closing the thread
+    }
   };
 
   return (
@@ -155,17 +166,19 @@ const App: React.FC = () => {
       </SidebarScroller>
       <Main>
         {/* {selectedChannelId && <MessageList messages={messages} users={users} />} */}
-        {selectedChannelId && (
+        {/* {selectedChannelId && (
           <MessageList
             messages={messages}
             users={users}
             onSelectThread={handleSelectThread}
           />
-        )}
-        {selectedThreadMessages && selectedThreadId && (
+        )} */}
+        {selectedChannelId && <ChatArea messages={messages} />}
+        {selectedThreadMessages && isThreadPanelOpen && selectedThreadId && (
           <ThreadDetail
             threadId={selectedThreadId}
             threadMessages={selectedThreadMessages}
+            onCloseThread={handleCloseThread} // Pass the handler to the ThreadDetail component
           />
         )}
       </Main>

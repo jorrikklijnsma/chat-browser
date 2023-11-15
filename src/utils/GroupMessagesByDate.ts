@@ -1,13 +1,9 @@
 // ./src/utils/groupMessagesByDate.ts
-
-import { Message } from '../types/Message';
+import { Message, groupMessagesByDate } from '../types/Message';
 
 const groupMessagesByDate = (messages: Message[]) => {
   // Group messages by their date
-  const grouped = { [string]: Message }
-  {
-    [string]: Message,
-  };
+  const grouped: groupMessagesByDate = {};
 
   messages.forEach((message) => {
     const date = new Date(message.timestamp * 1000).toDateString(); // Convert timestamp to readable date

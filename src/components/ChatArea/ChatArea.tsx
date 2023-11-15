@@ -2,7 +2,9 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import Message from '../Message/Message'; // Assume this is your message component
+import ChatMessage from '../Message/ChatMessage';
+import groupMessagesByDate from '../../utils/GroupMessagesByDate';
+import { Message } from '../../types';
 
 const ChatContainer = styled.div`
   display: flex;
@@ -34,8 +36,11 @@ interface ChatAreaProps {
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({ messages }) => {
-  // Group messages by date
-  const groupedMessages = {}; // Implement the logic to group messages by date
+  const filteredMessages = messages.filter(
+    (message) => !message.threadId || message.threadId === message.id,
+  );
+
+  const groupedMessages = groupMessagesByDate(filteredMessages); // Use your existing grouping function
 
   return (
     <ChatContainer>
@@ -45,7 +50,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ messages }) => {
             <DateSeparatorText>{date}</DateSeparatorText>
           </DaySeparator>
           {messages.map((message, index) => (
-            <Message key={index} message={message} />
+            <ChatMessage key={index} message={message} />
           ))}
         </React.Fragment>
       ))}
