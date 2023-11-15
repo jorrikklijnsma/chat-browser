@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ channels, onSelectChannel }) => {
         {channels.map((channel) => (
           <ChannelListItem
             key={channel.id}
-            onClick={() => onSelectChannel(channel.id)}
+            onClick={() => onSelectChannel(channel.name)}
           >
             # {channel.name}
           </ChannelListItem>

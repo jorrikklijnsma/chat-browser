@@ -3,7 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Message } from '../../types';
-import ThreadMessage from '../Message/ChatMessage';
+import ThreadMessage from './ThreadMessage';
 
 const ThreadPanel = styled.div`
   grid-area: thread;
@@ -31,13 +31,13 @@ const CloseThreadButton = styled.button`
 `;
 
 interface Props {
-  threadId: string;
+  thread_ts: string;
   threadMessages: Message[];
   onCloseThread: () => void; // Add a close handler prop
 }
 
 const ThreadDetail: React.FC<Props> = ({
-  threadId,
+  thread_ts,
   threadMessages,
   onCloseThread,
 }) => {
@@ -46,7 +46,7 @@ const ThreadDetail: React.FC<Props> = ({
       <CloseThreadButton onClick={onCloseThread}>X</CloseThreadButton>
       <ThreadHeader>
         {/* You can add the thread topic here */}
-        Thread: {threadId}
+        Thread: {thread_ts}
       </ThreadHeader>
 
       <ThreadMessageList>

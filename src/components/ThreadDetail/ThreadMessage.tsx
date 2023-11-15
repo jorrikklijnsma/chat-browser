@@ -1,7 +1,6 @@
 import { styled } from 'styled-components';
 import { Message } from '../../types';
 import formatTimestamp from '../../utils/FormatTimestamp';
-import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 // Define additional styled components for the message layout
 const MessageWrapper = styled.div`
@@ -53,26 +52,13 @@ const MessageHeader = styled.div`
 
 interface Props {
   message: Message;
-  onSelectThread: (thread_ts: string) => void;
 }
 
-const ChatMessage = forwardRef(({ message, onSelectThread }: Props, ref) => {
-  const messageRef = useRef<HTMLDivElement>(null);
-
-  // Use `useImperativeHandle` to expose the `scrollIntoView` function to parent components
-  useImperativeHandle(ref, () => ({
-    scrollIntoView: () => {
-      messageRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-    },
-  }));
-
+const ThreadMessage: React.FC<Props> = ({ message }) => {
   const formattedTime = formatTimestamp(message.ts);
 
   return (
-    <MessageWrapper ref={messageRef}>
+    <MessageWrapper>
       {message.user_profile?.image_72 && (
         <MessageAvatar src={message.user_profile.image_72} alt={message.user} />
       )}
@@ -87,14 +73,9 @@ const ChatMessage = forwardRef(({ message, onSelectThread }: Props, ref) => {
           <MessageTimestamp>{formattedTime}</MessageTimestamp>
         </MessageHeader>
         <MessageValue>{message.text}</MessageValue>
-        {message.ts !== undefined && (
-          <button onClick={() => onSelectThread(message.ts!)}>
-            Open Thread
-          </button>
-        )}
       </MessageContent>
     </MessageWrapper>
   );
-});
+};
 
-export default ChatMessage;
+export default ThreadMessage;

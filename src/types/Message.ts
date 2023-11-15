@@ -42,7 +42,7 @@ export interface Message {
   id: string;
   userId: string;
   timestamp: number;
-  threadId?: string;
+  thread_ts?: string;
   attachments?: Attachment[];
   text: string;
   user: string;
@@ -52,7 +52,6 @@ export interface Message {
   user_team: string;
   source_team: string;
   user_profile: UserProfile;
-  thread_ts: string;
   reply_count?: number;
   reply_users_count?: number;
   latest_reply?: string;

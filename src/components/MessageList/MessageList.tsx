@@ -22,12 +22,12 @@ const MessageBlock = styled.div`
   padding: 1rem;
 `;
 
-const ThreadDisplay = ({ threadId }) => {
-  return <div>Thread: {threadId}</div>;
+const ThreadDisplay = ({ thread_ts }) => {
+  return <div>Thread: {thread_ts}</div>;
 };
 
 const MessageList: React.FC<
-  Props & { onSelectThread: (threadId: string) => void }
+  Props & { onSelectThread: (thread_ts: string) => void }
 > = ({ messages, users, onSelectThread }) => {
   const renderMessageBlocks = (blocks: MessageBlock[]) => {
     return blocks.map((block, index) => (
@@ -74,7 +74,7 @@ const MessageList: React.FC<
         replyCount: message.reply_count,
         date: date.toLocaleDateString('en-US'),
         time: formattedTime,
-        threadId: message.threadId,
+        thread_ts: message.thread_ts,
       };
     })
     .filter((message) => message.content !== null)
@@ -105,7 +105,7 @@ const MessageList: React.FC<
           <p>Date: {message.date ? message.date : 'no known date'}</p>
           <p>Time: {message.time ? message.time : 'no known time'}</p>
           {message.isThread && (
-            <button onClick={() => onSelectThread(message.threadId)}>
+            <button onClick={() => onSelectThread(message.thread_ts)}>
               Open Thread
             </button>
           )}

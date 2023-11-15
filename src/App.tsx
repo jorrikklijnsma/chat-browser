@@ -60,11 +60,10 @@ const App: React.FC = () => {
   const [allMessages, setAllMessages] = useState<{
     [channelId: string]: Message[];
   }>({});
-  const [users, setUsers] = useState<User[]>([]);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
     null,
   );
-  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
+  const [selectedThreadTs, setSelectedThreadTs] = useState<string | null>(null);
 
   const [isThreadPanelOpen, setIsThreadPanelOpen] = useState<boolean>(false);
 
@@ -93,19 +92,14 @@ const App: React.FC = () => {
     [channelId: string]: Message[];
   }) => {
     // Instead of setting a state directly, store the messages in the existing messages object
-    setMessages([]);
     setAllMessages(loadedMessages);
-    console.log(loadedMessages);
     // If there's a selected channel, set the messages for it
     if (selectedChannelId) {
       fetchMessagesForChannel(selectedChannelId);
     }
   };
 
-  const handleUsersLoaded = (loadedUsers: User[]) => {
-    setUsers(loadedUsers);
-  };
-
+  const handleUsersLoaded = () => {};
   const handleSelectChannel = (channelId: string) => {
     setSelectedChannelId(channelId);
     // Here you would fetch or filter messages for the selected channel.
@@ -113,32 +107,42 @@ const App: React.FC = () => {
     fetchMessagesForChannel(channelId);
   };
 
-  // Assuming you have a function that sets messages for the current channel
   const fetchMessagesForChannel = (channelId: string) => {
-    // This is a placeholder for whatever logic you have to load messages.
-    // This could be a network request or a filter on locally available data.
-    // For example, if you have all messages loaded:
-    const filteredMessages = allMessages[channelId];
-    console.log(filteredMessages, channelId);
+    console.log('fetchMessagesForChannel', allMessages);
+    const filteredMessages = allMessages[channelId] || [];
     setMessages(filteredMessages);
   };
 
-  const handleSelectThread = (threadId: string) => {
-    setSelectedThreadId(threadId);
-    setIsThreadPanelOpen(true); // Open the thread panel when a thread is selected
-    scrollToMessage(threadId); // Implement this function to scroll to the message in the main chat
+  // Keep a map of message refs
+  const messageRefs = new Map<string, React.RefObject<any>>();
 
-    // const threadMessages = messages.filter(
-    //   (message) => message.threadId === threadId,
-    // );
-    // setSelectedThreadMessages(threadMessages);
+  const handleSelectThread = (thread_ts: string) => {
+    setSelectedThreadTs(thread_ts);
+    setIsThreadPanelOpen(true); // Open the thread panel when a thread is selected
+
+    // If a ref for the thread starter message exists, scroll to it
+    messageRefs.get(thread_ts)?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
   };
 
-  const handleCloseThread = () => {
-    setIsThreadPanelOpen(false); // Close the thread panel
-    if (selectedThreadId) {
-      scrollToMessage(selectedThreadId); // Scroll to the message when closing the thread
+  useEffect(() => {
+    if (selectedThreadTs) {
+      const activeThreadMessages = messages.filter(
+        (message) =>
+          message.ts === selectedThreadTs ||
+          message.thread_ts === selectedThreadTs,
+      );
+      console.log('messages', messages);
+      console.log('activeThreadMessages', activeThreadMessages);
+      setSelectedThreadMessages(activeThreadMessages);
     }
+  }, [selectedThreadTs, messages]); // Depend on selectedThreadTs and messages
+
+  const handleCloseThread = () => {
+    setIsThreadPanelOpen(false);
+    setSelectedThreadTs(null);
   };
 
   return (
@@ -165,18 +169,12 @@ const App: React.FC = () => {
         </Aside>
       </SidebarScroller>
       <Main>
-        {/* {selectedChannelId && <MessageList messages={messages} users={users} />} */}
-        {/* {selectedChannelId && (
-          <MessageList
-            messages={messages}
-            users={users}
-            onSelectThread={handleSelectThread}
-          />
-        )} */}
-        {selectedChannelId && <ChatArea messages={messages} />}
-        {selectedThreadMessages && isThreadPanelOpen && selectedThreadId && (
+        {selectedChannelId && (
+          <ChatArea messages={messages} onSelectThread={handleSelectThread} />
+        )}
+        {selectedThreadMessages && isThreadPanelOpen && selectedThreadTs && (
           <ThreadDetail
-            threadId={selectedThreadId}
+            thread_ts={selectedThreadTs}
             threadMessages={selectedThreadMessages}
             onCloseThread={handleCloseThread} // Pass the handler to the ThreadDetail component
           />
